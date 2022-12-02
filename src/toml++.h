@@ -5,10 +5,11 @@
 #include <vector>
 #include <memory>
 
-namespace tomlConfig 
-{
+using std::wstring_view;
 
-    struct tomlSettings 
+namespace tomlConfig
+{
+    struct tomlSettings
     {
         // [nvngx_loader_options]
         bool Disable_NVNGX_Checks;
@@ -16,8 +17,7 @@ namespace tomlConfig
     };
 
     bool Initialize();
-    bool LoadTomlFile(const std::wstring_view FilePath);
-
+    bool LoadTomlFile(const wstring_view FilePath);
 }
 
 extern tomlConfig::tomlSettings Configuration;

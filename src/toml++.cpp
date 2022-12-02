@@ -1,27 +1,32 @@
-#include "..\dependencies\tomlplusplus\include\toml++\toml.h"
+#pragma once
 
+#include "..\dependencies\tomlplusplus\include\toml++\toml.h"
 #include "toml++.h"
 
-tomlConfig::tomlSettings Configuration;
-namespace tomlConfig 
+using tomlConfig::tomlSettings;
+using toml::table, toml::parse_error, toml::parse_file;
+using std::wstring_view;
+
+tomlSettings Configuration;
+
+namespace tomlConfig
 {
+    tomlSettings ParseSettings(const table& Table);
 
-    tomlSettings ParseSettings(const toml::table& Table);
-
-    bool Initialize() 
+    bool Initialize()
     {
         return LoadTomlFile(L"nvngx_loader.toml");
     }
 
-    bool LoadTomlFile(const std::wstring_view FilePath) 
+    bool LoadTomlFile(const wstring_view FilePath)
     {
-        toml::table table;
+        table table;
 
-        try 
+        try
         {
-            table = toml::parse_file(L"nvngx_loader.toml");
+            table = parse_file(L"nvngx_loader.toml");
         }
-        catch (const toml::parse_error&) 
+        catch (const parse_error&)
         {
             return false;
         }
@@ -31,10 +36,9 @@ namespace tomlConfig
     }
 
 #define PARSE_TOML_MEMBER(obj, x) g_tomlSettings.x = ( * obj)[#x].value_or(decltype(g_tomlSettings.x) {})
-
-    tomlSettings ParseSettings(const toml::table& Table) 
+    tomlSettings ParseSettings(const table& Table)
     {
-        tomlSettings g_tomlSettings;
+        tomlSettings g_tomlSettings { NULL };
 
         // [nvngx_loader_options]
         if (auto nvngx_loader_options = Table[L"nvngx_loader_options"].as_table()) 
@@ -46,5 +50,4 @@ namespace tomlConfig
         return g_tomlSettings;
     }
 #undef PARSE_TOML_MEMBER
-
 }
